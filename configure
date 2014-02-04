@@ -753,12 +753,12 @@ CFG_ZLIB=auto
 CFG_SYMBIAN_DEFFILES=auto
 CFG_S60=auto
 CFG_SQLITE=qt
-CFG_GIF=auto
+CFG_GIF=yes
 CFG_TIFF=auto
 CFG_LIBTIFF=auto
 CFG_PNG=yes
 CFG_LIBPNG=auto
-CFG_JPEG=auto
+CFG_JPEG=yes
 CFG_LIBJPEG=auto
 CFG_MNG=auto
 CFG_LIBMNG=auto
@@ -917,7 +917,7 @@ CFG_SILENT=no
 CFG_GRAPHICS_SYSTEM=default
 CFG_RUNTIME_SYSTEM=
 CFG_ALSA=auto
-CFG_PULSEAUDIO=auto
+CFG_PULSEAUDIO=no
 CFG_COREWLAN=auto
 CFG_ICD=auto
 CFG_NOPROCESS=no
@@ -7303,12 +7303,10 @@ elif [ "$CFG_DEBUG" = "no" ]; then
 fi
 if [ "$CFG_SHARED" = "yes" ]; then
     QMAKE_OUTDIR="${QMAKE_OUTDIR}-shared"
-    QTCONFIG_CONFIG="$QTCONFIG_CONFIG shared"
-    QT_CONFIG="$QT_CONFIG shared"
+    QMAKE_CONFIG="$QMAKE_CONFIG shared dll"
 elif [ "$CFG_SHARED" = "no" ]; then
     QMAKE_OUTDIR="${QMAKE_OUTDIR}-static"
-    QTCONFIG_CONFIG="$QTCONFIG_CONFIG static"
-    QT_CONFIG="$QT_CONFIG static"
+    QMAKE_CONFIG="$QMAKE_CONFIG static"
 fi
 if [ "$PLATFORM_QWS" = "yes" ]; then
     QMAKE_OUTDIR="${QMAKE_OUTDIR}-emb-$CFG_EMBEDDED"
@@ -7769,13 +7767,6 @@ if [ "$CFG_GUI" = "no" ]; then
     canBuildWebKit="no"
 fi
 
-if [ "$CFG_SHARED" = "no" ]; then
-    echo
-    echo "WARNING: Using static linking will disable the WebKit module."
-    echo
-    canBuildWebKit="no"
-fi
-
 CFG_CONCURRENT="yes"
 if [ "$canBuildQtConcurrent" = "no" ]; then
     QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_CONCURRENT"
@@ -7824,8 +7815,8 @@ else
     QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_SVG"
 fi
 
-if [ "$CFG_WEBKIT" != "no" ]; then
-    CFG_WEBKIT="$canBuildWebKit"
+if [ "$canBuildWebKit" == "no" ]; then
+    CFG_WEBKIT="no"
 fi
 
 if [ "$CFG_WEBKIT" != "no" ]; then
